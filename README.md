@@ -1,6 +1,12 @@
 # Typescript with Node & Firends using TDD
 
-Follow along with your friends and family with [the tut](http://mherman.org/blog/2016/11/05/developing-a-restful-api-with-node-and-typescript/#.WC7TEqJ96Rt).
+This is a model server app which demonstrates best practices for developing an API using TypeScript and NodeJS.
+Of course [Express](http://expressjs.com/) is used right now, but in the future, who knows, it might be [Koa](http://koajs.com/).
+
+For the testing we use Mocha & Chai.
+
+To set up a project like this, follow along with your friends and family with 
+[this blog post](http://mherman.org/blog/2016/11/05/developing-a-restful-api-with-node-and-typescript/#.WC7TEqJ96Rt).
 
 
 ## Step 1: Typescript
@@ -48,4 +54,9 @@ $ touch src/routes/HeroRourter.ts
 $ npm test
 ```
 
+## Step 6: Second Endpoint
+
+1. Create a method on HeroRouter that takes the arguments of your typical Express request handler: request, response, and next.
+2. Implement the server’s response for the endpoint.
+3. Inside of init, use HeroRouter’s instance of the Express Router to attach the handler to an endpoint of the API.
 
