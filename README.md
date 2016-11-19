@@ -1,4 +1,5 @@
-# Typescript NodeJS Learning record Store
+# Typescript NodeJS Learning Record Store
+tyno-lrs
 
 This project provides a good example of how to use TypeScript with NodeJS & Firends (Express) 
 in a TDD development cycle.
@@ -154,7 +155,7 @@ import * as xapi from '../src/xapi/Wrapper';
 
 The test passes!
 
-## <a name="xAPI-installation>xAPI installation</a>
+## <a name="xAPI-installation">xAPI installation</a>
 
 We want to use the [xAPI wrapper]() from [ADL](https://www.adlnet.gov/) (Advanced Distributed Learnining). 
 Despite it's military slant, this is a great API for educational apps. 
