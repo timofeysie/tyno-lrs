@@ -3,7 +3,6 @@ import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 import app from '../src/App';
 import * as xapi from '../src/xapi/Wrapper';
-// var xAPIWrapper = require('../src/xapi/Wrapper');
 
 chai.use(chaiHttp);
 const expect = chai.expect;
@@ -19,6 +18,15 @@ describe('xAPI tests', () => {
         let config = wrapper.getConfig();
         console.log('config',config);
         expect(config).to.exist;
+    });
+    it('should return a created statement', () => {
+        let wrapper = new xapi.Wrapper();
+        let statement = wrapper.createStatement(
+          'mailto:steve.vergenz.ctr@adlnet.gov',
+          'http://adlnet.gov/expapi/verbs/launched',
+          'http://vwf.adlnet.gov/xapi/virtual_world_sandbox');
+        console.log('statement',statement);
+        expect(statement).to.exist;
     });
   });
 });

@@ -25,6 +25,32 @@ This can be configured using the chai object.
 2. [Project setup](#project-setup)
 
 
+## <a name="generating-statements">Generating statements</a>
+
+After settling on a way to import the library, we now want to create our first statement.
+We created a config object (which didn't actually requre the lib) in xAPI.test.ts like this:
+```
+import * as xapi from '../src/xapi/Wrapper';
+...
+let wrapper = new xapi.Wrapper();
+```
+
+In Wrapper.ts:
+```
+var xAPIWrapper = require('../../node_modules/xAPIWrapper/dist/xapiwrapper.min');
+...
+let statement = new xAPIWrapper.ADL.XAPIStatement(actor, verb, object);
+```
+
+The last line there breaks the test with this error:
+```
+TypeError: Cannot read property 'XAPIStatement' of undefined
+```
+
+So how to get a handle on the ADL oject used in the examples?
+That should be imported and available with the require statement, no?
+
+
 ## <a name="dev">Dev</a>
 
 To watch the files for changes and re-load:
@@ -55,7 +81,15 @@ When we test the getConfig function which uses btoa(), we get this error:
 Exception in Config trying to encode auth: ReferenceError: btoa is not defined
 ```
 
-
+If you look in the xAPIWrapper source, you will find this:
+```
+function toBase64(text) {
+    // if (CryptoJS && CryptoJS.enc.Base64)
+        return CryptoJS.enc.Base64.stringify(CryptoJS.enc.Latin1.parse(text));
+    // else
+    //     return Base64.encode(text);
+}
+```
 
 ## <a name="xAPI-configuration">xAPI configuration</a>
 
@@ -155,6 +189,76 @@ import * as xapi from '../src/xapi/Wrapper';
 
 The test passes!
 
+But actually trying to use the lib still does not work.
+
+Let's go thru the different styles.  We're looking at [this explainiation](https://www.exratione.com/2015/12/es6-use-of-import-property-from-module-is-not-a-great-plan/) 
+of imports:
+
+```
+// Import the default export of a module.  
+import xAPIWrapper from '../../node_modules/xAPIWrapper/src/xapiwrapper';
+
+// Import all exports from a module as properties of an object.
+import * as xapi from '../../node_modules/xAPIWrapper/src/xapiwrapper';
+
+// These two formats are not discussed.
+var xAPIWrapper = require('../../node_modules/xAPIWrapper/src/xapiwrapper');
+import xAPIWrapper = require('../../node_modules/xAPIWrapper/src/xapiwrapper');
+```
+
+It also depends on how the library is exported.  
+Since xapiwrapper.js is not in TypeScript, it doesn't have to play by typescript rules.
+
+At the end of the file it does this:
+```
+module.exports = new XAPIWrapper(Config(), false);
+```
+
+The index.js file in the xAPIWrapper/src directory does this:
+```
+var xAPIWrapper = require('./xapiwrapper');
+var xAPIStatement = require('./xapistatement');
+var verbs = require('./verbs');
+var xAPILaunch = require('./xapi-launch');
+var xapiutil = require('./xapi-util');
+var toExport = {
+  XAPIWrapper: xAPIWrapper,
+  XAPIStatement: xAPIStatement,
+  verbs: verbs,
+  launch: xAPILaunch,
+  xapiutil: xapiutil
+};
+(function() {
+  var root = this;
+  if( typeof window === 'undefined' ) {
+    exports = module.exports = toExport;
+    exports.ADL = toExport;
+  } else {
+    root.ADL = toExport;    // this attaches to the window
+    window.ADL = toExport;
+  }
+}).call(this);
+```
+
+So what does that mean for the way it should be imported into TypeScript?
+
+[This issue]() recommends using this in the tsconfog.json file:
+```
+"moduleResolution": "classic"
+```
+
+But that will break previous imports:
+```
+TSError: ⨯ Unable to compile TypeScript
+src/App.ts (2,26): Cannot find module 'express'. (2307)
+src/App.ts (3,25): Cannot find module 'morgan'. (2307)
+src/App.ts (4,29): Cannot find module 'body-parser'. (2307)
+```
+
+So the jury is still out on how to best use this lib.
+
+
+
 ## <a name="xAPI-installation">xAPI installation</a>
 
 We want to use the [xAPI wrapper]() from [ADL](https://www.adlnet.gov/) (Advanced Distributed Learnining). 
@@ -204,7 +308,7 @@ And even though VSCode accepts that now, we still get the 'Cannot find module' e
 That's becuase the path should go up one level '../node_modules'.  Then the tests run.
 
 
-## <a name="Project-setup>Project setup</a>
+## <a name="Project-setup">Project setup</a>
 
 To set up a project like this, follow along with this friendly blog by Michael Herman:
 [Developing a RESTful API With Node and TypeScript](http://mherman.org/blog/2016/11/05/developing-a-restful-api-with-node-and-typescript/#.WC7TEqJ96Rt).
