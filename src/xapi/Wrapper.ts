@@ -4,11 +4,8 @@ var verbs = require('../../node_modules/xAPIWrapper/src/verbs');
 var xAPILaunch = require('../../node_modules/xAPIWrapper/src/xapi-launch');
 var xapiutil = require('../../node_modules/xAPIWrapper/src/xapi-util');
 
-const map: any = {
-    'crypto-js': '../../node_modules/xAPIWrapper/lib/cryptojs_v3.1.2'
-};
+var crypto = require('../../node_modules/crypto-js/cryptop-js');
 
-import CryptoJS from 'crypto-js';
 
 
 export class Wrapper {

@@ -3,6 +3,9 @@ import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 import app from '../src/App';
 import * as xapi from '../src/xapi/Wrapper';
+//import * as CryptoJS from '../node_modules/crypto-js';
+import CryptoJS = require('/Users/tim/node/typescript-api/node_modules/crypto-js/crypto-js');
+
 
 chai.use(chaiHttp);
 const expect = chai.expect;

@@ -132,6 +132,19 @@ $ typings install --ambient crypto-js
 This was all three years ago.  Typings have moved on since then.
 
 
+Ditching the crypto from the xAPI lib, and trying this:
+```
+$ npm install crypto-js --save
+```
+And then:
+```
+import * as CryptoJS from '../../node_modules/crypto-js';
+```
+
+And anyhow, the error is from the test, so maybe this import needs to be in the test file?
+Still doesn't help.
+
+What gives?
 
 
 ## <a name="generating-statements">Generating statements</a>
