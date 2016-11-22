@@ -25,6 +25,115 @@ This can be configured using the chai object.
 2. [Project setup](#project-setup)
 
 
+
+## <a name="using-a-lib">Using a lib</a>
+
+There is a [good example here](https://github.com/Microsoft/TypeScript/issues/247) with a section called 
+### Example for node_modules
+
+And verbatum I will quote it:
+
+If we had:
+```
+./node_modules/concator/index.ts
+./myApp.ts
+```
+And in index.ts we had:
+```
+export function concat(param1: string, param2:string): string {
+      return param1 + ' ' + param2;
+}
+```
+in myApp.ts:
+```
+import concator = require('concator');  // loads the module from node_modules
+var result = concator.concat('I like', 'this.');
+var wontWork = concator.concat('this will fail');  // compile error, concat needs 2 params
+```
+
+However, we do not have index.ts, we have index.js, which has this:
+```
+    exports = module.exports = toExport;
+    exports.ADL = toExport;
+```
+
+So how can we use this lib, TypeScipt-wise?
+These, similar to what is used in the index.js file, but with the correct paths for the node modules seems to be working:
+```
+var xAPIWrapper = require('../../node_modules/xAPIWrapper/src/xapiwrapper');
+var xAPIStatement = require('../../node_modules/xAPIWrapper/src/xapistatement');
+var verbs = require('../../node_modules/xAPIWrapper/src/verbs');
+var xAPILaunch = require('../../node_modules/xAPIWrapper/src/xapi-launch');
+var xapiutil = require('../../node_modules/xAPIWrapper/src/xapi-util');
+```
+
+But now crypto is a problem.
+The way we are using it has a red squiggly under the path section:
+```
+import * as CryptoJS from '../../node_modules/xAPIWrapper/lib/cryptojs_v3.1.2';
+```
+
+An answer of SO shows this:
+```
+import * as CryptoJS from '../../../node_modules/crypto-js';
+```
+or
+```
+import CryptoJS = require('crypto-js');
+```
+
+Copying the path to that file shows this: 
+/Users/tim/node/typescript-api/node_modules/xAPIWrapper/lib/cryptojs_v3.1.2.js
+
+This has no squiggly:
+```
+var crypto = require('../../node_modules/xAPIWrapper/lib/cryptojs_v3.1.2');
+```
+But the var the code is looking for is crypto-js, which is an illegal var name.
+Actually it's a module name:
+```
+Error: Cannot find module 'crypto-js'
+```
+
+In case you are wondering, the version suggested [on SO](http://stackoverflow.com/questions/38479667/import-crypto-js-in-an-angular-2-project-created-with-angular-cli) 
+above both have red squigglies on them.
+
+The next answer on the page has an edit that suggests this:
+```
+const map: any = {
+    'crypto-js': '../../node_modules/xAPIWrapper/lib/cryptojs_v3.1.2'
+};
+/** User packages configuration. */
+const packages: any = {
+    'crypto-js': {
+        format: 'cjs',
+        defaultExtension: 'js',
+        main: 'crypto-js.js'
+    }
+};
+```
+
+This looks promising, but doesn't work.  Same error when running the tests tho there are no squigglies.
+
+This version also failes:
+```
+const map: any = {
+    'crypto-js': '../../node_modules/xAPIWrapper/lib/cryptojs_v3.1.2'
+};
+import CryptoJS from 'crypto-js';
+```
+
+What next?  [This page](https://www.snip2code.com/Snippet/28724/Using-crypto-js-in-node-js-with-Typescri) 
+recommends adding code to the actual crypto d.ts file (not very maintainable!).
+
+Install typings for crypto-js:
+$ typings install --ambient crypto-js
+
+This was all three years ago.  Typings have moved on since then.
+
+
+
+
 ## <a name="generating-statements">Generating statements</a>
 
 After settling on a way to import the library, we now want to create our first statement.
