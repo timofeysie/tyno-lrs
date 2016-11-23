@@ -144,7 +144,58 @@ import * as CryptoJS from '../../node_modules/crypto-js';
 And anyhow, the error is from the test, so maybe this import needs to be in the test file?
 Still doesn't help.
 
-What gives?
+What gives?  It doesn't even look like the lib is being used anywhere.
+
+Looking in more detail, its not either our code or the xAPI code that is causing this error:
+
+/Users/tim/node/typescript-api/node_modules/ts-node/dist/index.js:160
+                    throw new TSError(formatDiagnostics(diagnosticList, cwd, ts, lineOffset));
+                    ^
+TSError: ⨯ Unable to compile TypeScript
+test/xAPI.test.ts (7,27): Cannot find module '/Users/tim/node/typescript-api/node_modules/crypto-js/crypto-js'. (2307)
+
+Here is the section that is requiring the code:
+```
+function getCacheName(sourceCode, fileName) {
+    return crypto.createHash('sha1')
+        .update(path_1.extname(fileName), 'utf8')
+        .update('\0', 'utf8')
+        .update(sourceCode, 'utf8')
+        .digest('hex');
+}
+function getCompilerDigest(opts) {
+    return crypto.createHash('sha1').update(JSON.stringify(opts), 'utf8').digest('hex');
+}
+```
+
+We installed ts-node in Step 4: TDD
+```
+$ npm install ts-node@1.6.1 --save-dev
+```
+
+This is the full description of why we need ts-node: 
+If we write out tests in .ts files, we’ll need to make sure that Mocha can understand them. By itself, Mocha can only interpret JavaScript files, not TypeScript. There are a number of different ways to accomplish this. To keep it simple, we’ll leverage ts-node, so that we can provide TypeScript interpretation to the Mocha environment without having to transpile the tests into different files. ts-node will interpret and transpile our TypeScript in memory as the tests are run.
+
+But still, why does this require crypto, and why is it breaking now?  
+It ran from step 4 onwards, and during early testing of the xAPI code.
+
+We took out the test that started causing all the trouble, and sure enough, the other tests pass again.
+We put that test back in, and all of a sudden, the tests run and the problem test fails.
+
+```
+  1 failing
+
+  1) xAPI tests configuration should return a created statement:
+     TypeError: xAPIStatement.Agent is not a function
+      at Wrapper.createStatement (src/xapi/Wrapper.ts:32:5)
+      at Context.<anonymous> (test/xAPI.test.ts:25:33)
+```
+
+So do we also need to import Agent?  Again with the imports!
+
+
+
+
 
 
 ## <a name="generating-statements">Generating statements</a>
@@ -212,6 +263,18 @@ function toBase64(text) {
     //     return Base64.encode(text);
 }
 ```
+
+After getting a few tests running, this log comment shows up:
+```
+Exception in Config trying to encode auth: ReferenceError: btoa is not defined
+```
+
+But isn't that a regular JavaScript function?
+Maybe it's only a Mozilla thing and not supported in Node?
+That would be weird.
+[Can I use](http://caniuse.com/#feat=atob-btoa) shows full coverage.
+What gives.
+
 
 ## <a name="xAPI-configuration">xAPI configuration</a>
 

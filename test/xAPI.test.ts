@@ -3,8 +3,6 @@ import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 import app from '../src/App';
 import * as xapi from '../src/xapi/Wrapper';
-//import * as CryptoJS from '../node_modules/crypto-js';
-import CryptoJS = require('/Users/tim/node/typescript-api/node_modules/crypto-js/crypto-js');
 
 
 chai.use(chaiHttp);
@@ -19,7 +17,6 @@ describe('xAPI tests', () => {
     it('should return a configuration object', () => {
         let wrapper = new xapi.Wrapper();
         let config = wrapper.getConfig();
-        console.log('config',config);
         expect(config).to.exist;
     });
     it('should return a created statement', () => {

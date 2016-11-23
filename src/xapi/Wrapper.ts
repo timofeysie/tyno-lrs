@@ -4,7 +4,7 @@ var verbs = require('../../node_modules/xAPIWrapper/src/verbs');
 var xAPILaunch = require('../../node_modules/xAPIWrapper/src/xapi-launch');
 var xapiutil = require('../../node_modules/xAPIWrapper/src/xapi-util');
 
-var crypto = require('../../node_modules/crypto-js/cryptop-js');
+//var crypto = require('../../node_modules/crypto-js/cryptop-js');
 
 
 
@@ -27,15 +27,15 @@ export class Wrapper {
   }
 
   public createStatement(actor, verb, object) {
-    //let statement = new ADL.XAPIStatement(actor, verb, object);
-    var stmt = new xAPIStatement(
-				new xAPIStatement.Agent(xAPIWrapper.hash('mailto:steve.vergenz.ctr@adlnet.gov'), 
-				'Steven Vergenz'),
-				verbs.launched,
-				new xAPIStatement.Activity('act:wrapper_test', 'xAPIWrapper test page',
-					'A website that exercises the functions of the xAPIWrapper')
-			);
-    return stmt;
+    let statement = new xAPIStatement(actor, verb, object);
+    // var stmt = new xAPIStatement(
+		// 		new xAPIStatement.Agent(xAPIWrapper.hash('mailto:steve.vergenz.ctr@adlnet.gov'), 
+		// 		'Steven Vergenz'),
+		// 		verbs.launched,
+		// 		new xAPIStatement.Activity('act:wrapper_test', 'xAPIWrapper test page',
+		// 			'A website that exercises the functions of the xAPIWrapper')
+		// 	);
+    return statement;
   }
 }
 
