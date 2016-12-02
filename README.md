@@ -1,7 +1,6 @@
 # Typescript NodeJS Learning Record Store
-tyno-lrs
 
-This project provides a good example of how to use TypeScript with NodeJS & Firends (Express) 
+This project provides a good example of how to use TypeScript with NodeJS & Friends (Express) 
 in a TDD development cycle.
 
 It contains a server app which demonstrates best practices for developing an API using TypeScript.
@@ -28,10 +27,9 @@ This can be configured using the chai object.
 
 ## <a name="using-a-lib">Using a lib</a>
 
-There is a [good example here](https://github.com/Microsoft/TypeScript/issues/247) with a section called 
-### Example for node_modules
+There is a [good example here](https://github.com/Microsoft/TypeScript/issues/247) with a section called "Example for node_modules"
 
-And verbatum I will quote it:
+And verbatim I will quote it:
 
 If we had:
 ```
@@ -115,7 +113,7 @@ const packages: any = {
 
 This looks promising, but doesn't work.  Same error when running the tests tho there are no squigglies.
 
-This version also failes:
+This version also fails:
 ```
 const map: any = {
     'crypto-js': '../../node_modules/xAPIWrapper/lib/cryptojs_v3.1.2'
@@ -201,7 +199,7 @@ So do we also need to import Agent?  Again with the imports!
 ## <a name="generating-statements">Generating statements</a>
 
 After settling on a way to import the library, we now want to create our first statement.
-We created a config object (which didn't actually requre the lib) in xAPI.test.ts like this:
+We created a config object (which didn't actually require the lib) in xAPI.test.ts like this:
 ```
 import * as xapi from '../src/xapi/Wrapper';
 ...
@@ -220,7 +218,7 @@ The last line there breaks the test with this error:
 TypeError: Cannot read property 'XAPIStatement' of undefined
 ```
 
-So how to get a handle on the ADL oject used in the examples?
+So how to get a handle on the ADL object used in the examples?
 That should be imported and available with the require statement, no?
 
 
@@ -312,7 +310,7 @@ Then we get the same error we got during the xAPI installation section:
 Error: Cannot find module '../node_modules/xAPIWrapper/dist/xapiwrapper.min'
 ```
 
-This second error is becuase now, during testing, the lib is in its compiled location, and we need to do this:
+This second error is because now, during testing, the lib is in its compiled location, and we need to do this:
 ```
 var xAPIWrapper = require('../../node_modules/xAPIWrapper/dist/xapiwrapper.min');
 ```
@@ -376,7 +374,7 @@ The test passes!
 
 But actually trying to use the lib still does not work.
 
-Let's go thru the different styles.  We're looking at [this explainiation](https://www.exratione.com/2015/12/es6-use-of-import-property-from-module-is-not-a-great-plan/) 
+Let's go thru the different styles.  We're looking at [this explanation](https://www.exratione.com/2015/12/es6-use-of-import-property-from-module-is-not-a-great-plan/) 
 of imports:
 
 ```
