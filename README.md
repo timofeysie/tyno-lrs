@@ -24,6 +24,105 @@ This can be configured using the chai object.
 2. [Project setup](#project-setup)
 
 
+## allowJs is not set
+
+IN the src/xapi/Wrapper.ts file, there are two VSCode editor problems.
+The first is this import:
+```
+import * as CryptoJS from  '../../node_modules/crypto-js/crypto-js';
+```
+When hovering the mouse over the red squiggly under the path, it says:
+*[ts] Module '../../node_modules/crypto-js/crypto-js' was resolved to '/Users/tim/repos/myra-client-server/tyno-lrs/node_modules/crypto-js/crypto-js.js', but '--allowJs' is not set.*
+
+A note on an issue on GitHub of a project that had a similar problem said:
+*... reference the file directly like this import printJS from 'node_modules/print.js/src/index.js'; but if you do this you also have to configure the flag allowJs for the typescript could accept it...*
+
+To set '--allowJs' is done in the tsconfig file.
+On this [TypeSript page](https://github.com/Microsoft/TypeScript/issues/14485)
+
+So I add this to the config file:
+```
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist"
+  },
+```
+
+The red squiggly does not go away.  Since in my editor, I have three projects in one directory which depend on each other (so I don't have to keep closing one project to look at the code in another project), I'm not sure if this is a problem caused by that, or an actual path problem.  Unlike the issue mentioned above, there is no .js in the import path.  It says it resolves to .js, but that's not my doing
+
+[This issue](https://github.com/Microsoft/TypeScript/issues/3949#issuecomment-123430443) indicates that the location of the tsconfig file is important.  I have only ever had this file in the root directory.  And since the discussion was from 2015, I'm not sure that is valid anymore.
+
+The links for these issues have circular references, so back to the Google search,
+the second choice is [this link](https://github.com/Microsoft/TypeScript/issues/15970).
+
+It states the following:
+*--allowJs combined with the import makes the compiler think the node_module is part of your sources, and it will compile it for you, so your output will have node_modules\foo\foo.js*
+
+That sounds like what's happening here.
+
+The issues ends with the TypeScript 2.4 milestone on May 23
+```
+Tyno-lrs uses "typescript": "^2.0.6"
+Socius uses "typescript": "^2.0.3",
+Heat-wave uses "typescript": "~2.2.1" (in dev dependencies, the other two are in dependencies)
+```
+
+I know at least that Ionic and Angular in the heat-wave clinet require a certain version of Typescript.  I'm not sure about Express and node in the other two.  What a minefield JS development is!
+
+Worth a try using 2.4 in tyno-lrs.
+
+On the typescript site it has a download page which says to do this:
+```
+npm install -g typescript
+```
+
+But with that caret (^) in front of the 2, doesn't that mean it should be using the latest major version?
+Anyhow, set it to 2.4.0 and ran npm i.
+
+Then, back in the Wrapper.ts file, that red-squiggly is gone.  That worked!
+
+The only squiggly left then was on the toBase64 function (see below).
+
+Added the import to it: CryptoJS.toBase64
+And that squiggly is gone also.
+
+Running npm test goes well except for one failure:
+```
+Exception in Config trying to encode auth: TypeError: CryptoJS.toBase64 is not a function
+      ✓ should return a configuration object
+      1) should return a created statement
+
+
+  8 passing (172ms)
+  1 failing
+
+  1) xAPI tests configuration should return a created statement:
+     TypeError: Expecting a function in instanceof check, but got undefined
+      at new XAPIStatement (node_modules/xAPIWrapper/src/xapistatement.js:89:28)
+      at Wrapper.createStatement (src/xapi/Wrapper.ts:30:21)
+      at Context.<anonymous> (test/xAPI.test.ts:24:33)
+```
+
+So the Base64 issue is still an issue.
+One more issue is that node_modules appears to be in the git repo.
+Doing git status returns this:
+```
+	modified:   README.md
+	modified:   node_modules/typescript/.mailmap
+	modified:   node_modules/typescript/.npmignore
+    ...
+```
+
+We do have this in the .gitignore file:
+```
+/node_modules
+```
+
+Not sure why this is happening but out of time for this morning.
+
 
 ## <a name="using-a-lib">Using a lib</a>
 

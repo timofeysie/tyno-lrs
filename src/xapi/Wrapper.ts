@@ -15,7 +15,7 @@ export class Wrapper {
     let conf = {};
     conf['endpoint'] = "http://localhost:8000/xapi/";
     try {
-        conf['auth'] = "Basic " + toBase64('tom:1234');
+        conf['auth'] = "Basic " + CryptoJS.toBase64('tom:1234');
     } catch (e) {
         console.log("Exception in Config trying to encode auth: " + e);
     }
@@ -28,13 +28,13 @@ export class Wrapper {
 
   public createStatement(actor, verb, object) {
     let statement = new xAPIStatement(actor, verb, object);
-    // var stmt = new xAPIStatement(
-		// 		new xAPIStatement.Agent(xAPIWrapper.hash('mailto:steve.vergenz.ctr@adlnet.gov'), 
-		// 		'Steven Vergenz'),
-		// 		verbs.launched,
-		// 		new xAPIStatement.Activity('act:wrapper_test', 'xAPIWrapper test page',
-		// 			'A website that exercises the functions of the xAPIWrapper')
-		// 	);
+    var stmt = new xAPIStatement(
+				new xAPIStatement.Agent(xAPIWrapper.hash('mailto:steve.vergenz.ctr@adlnet.gov'), 
+				'Steven Vergenz'),
+				verbs.launched,
+				new xAPIStatement.Activity('act:wrapper_test', 'xAPIWrapper test page',
+					'A website that exercises the functions of the xAPIWrapper')
+			);
     return statement;
   }
 }
