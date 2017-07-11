@@ -15,8 +15,19 @@ This can be configured using the chai object.
 * The Expect / Should API covers the BDD assertion styles.
 * The Assert API covers the TDD assertion style.
 
+To use this server program, you will need gulp, node and npm installed.
+Use these commands:
+```
+$ npm i  
+$ gulp watch
+$ npm test
+$ npm start
+```
+
+
 ## Table of contents
 
+1. [AllowJs is not set](#allowjs)
 1. [dev](#dev)
 1. [toBase64](#toBase64)
 2. [xAPI configuration](#xAPI-configuration)
@@ -24,7 +35,7 @@ This can be configured using the chai object.
 2. [Project setup](#project-setup)
 
 
-## allowJs is not set
+## <a name="allowjs"> allowJs is not set
 
 IN the src/xapi/Wrapper.ts file, there are two VSCode editor problems.
 The first is this import:
@@ -653,3 +664,30 @@ $ npm test
 2. Implement the server’s response for the endpoint.
 3. Inside of init, use HeroRouter’s instance of the Express Router to attach the handler to an endpoint of the API.
 
+
+
+## Testing woes
+
+```
+$ npm test
+
+> typescript-api@1.0.0 test /Users/timcurchod/repos/tyno-lrs
+> mocha --reporter spec --compilers ts:ts-node/register test/**/*.test.ts
+
+
+/Users/timcurchod/repos/tyno-lrs/node_modules/ts-node/src/index.ts:312
+          throw new TSError(formatDiagnostics(diagnosticList, cwd, ts, lineOffset))
+                ^
+TSError: ⨯ Unable to compile TypeScript
+src/xapi/Wrapper.ts (7,28): Cannot find module '../../node_modules/crypto-js/crypto-js'. (2307)
+src/xapi/Wrapper.ts (18,35): Cannot find name 'toBase64'. (2304)
+    at getOutput (/Users/timcurchod/repos/tyno-lrs/node_modules/ts-node/src/index.ts:312:17)
+npm ERR! Test failed.  See above for more details.
+mac-dog:tyno-lrs timcurchod$ 
+```
+
+Had to get rid of crypto and the toBase64 call in Wrapper as well as for the test in xAPI.test.ts.
+It reiles on toBase64() used in the Wrapper.ts file for setting the conf['auth'] value.
+
+Also, the data file was not copied over in the build process.
+I need to be in the dist lib.

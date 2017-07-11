@@ -4,7 +4,7 @@ var verbs = require('../../node_modules/xAPIWrapper/src/verbs');
 var xAPILaunch = require('../../node_modules/xAPIWrapper/src/xapi-launch');
 var xapiutil = require('../../node_modules/xAPIWrapper/src/xapi-util');
 
-import * as CryptoJS from  '../../node_modules/crypto-js/crypto-js';
+//import * as CryptoJS from  'crypto-js';
 
 
 
@@ -15,7 +15,11 @@ export class Wrapper {
     let conf = {};
     conf['endpoint'] = "http://localhost:8000/xapi/";
     try {
+<<<<<<< HEAD
         conf['auth'] = "Basic " + CryptoJS.toBase64('tom:1234');
+=======
+        conf['auth'] = "Basic " + 'tom:1234'; // toBase64();
+>>>>>>> a560282b55923ca9a16c9a02ff0108ff80f49bcc
     } catch (e) {
         console.log("Exception in Config trying to encode auth: " + e);
     }
