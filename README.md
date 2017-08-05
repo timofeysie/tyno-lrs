@@ -1,5 +1,124 @@
 # Typescript NodeJS Learning Record Store
 
+
+## APIs
+
+```
+api/v1/heroes 
+```
+The basic get all heroes for the Angular 2+ tutorial example.
+
+The current dev port set is 3000, so this should get the list on your local:
+```
+http://localhost:3000/api/v1/heroes
+```
+
+
+## Deploying to Heroku
+
+A first try when deploying to Heroku showed that the build worked, but the site gave an error.  In the logs, there was this hint:
+```
+2017-08-05T02:06:13.314313+00:00 app[web.1]: npm ERR!     node dist/index.js
+```
+
+That's after using this link:
+```
+https://tyno-lrs.herokuapp.com/api/v1/heroes
+```
+
+The console in the browser shows:
+```
+tyno-lrs.herokuapp.com/:1 GET https://tyno-lrs.herokuapp.com/ 503 (Service Unavailable)
+```
+
+Deploying via the Heroku dashboard shows this in the log:
+```
+       
+-----> Caching build
+       Clearing previous node cache
+       Saving 2 cacheDirectories (default):
+       - node_modules
+       - bower_components (nothing to cache)
+-----> Build succeeded!
+-----> Discovering process types
+       Procfile declares types     -> (none)
+       Default types for buildpack -> web
+-----> Compressing...
+       Done: 18M
+-----> Launching...
+       Released v4
+       https://tyno-lrs.herokuapp.com/ deployed to Heroku
+```
+
+So, as I recall, we will need a proc file to tell Heroku which file to run.
+
+The basic commands so far have been npm test and npm start.
+But there is nothing in the dist directory, which is in the gitignore directory, meaning that it will not get to Heroku, which deploys from the master branch on GitHut currently.
+
+So we will also need to learn about deploying a TypeScript Node.js on Heroku.
+
+There is [another article on the basics of what Heroku and TypeScript](https://medium.com/@Roaders/deploying-a-node-and-browser-typescript-project-to-heroku-3e647ef74c82) work together:
+*When your app is deployed on Heroku it runs npm install in a subshell where NODE_ENV is production. This means that dev dependencies are not resolved and that the prepublish npm script is not run. You can test this by running: ```npm install --production```*
+
+### Dev dependencies
+*we have to include devDepenedencies such as typescript and any build tools in the normal dependency list we have to hook up the postinstall npm script to build our app.*
+
+### Versions
+*setting the node version and npm version that you are using, again in your package.json file:*
+```
+"engines": {
+    "node": "6.9.1",
+    "npm": "3.10.8"
+}
+```
+
+The port we know about, and is the same as using Node.js written in straight JavaScript.
+```
+const port = normalizePort(process.env.PORT || 3000);
+```
+One last not on the Medium article: *the app will publicly be available on port 80 but that's not the port that the app runs under.*
+
+### Travis vs Heroku
+Here is the [page](https://docs.travis-ci.com/user/deployment/heroku/) for the Tavis Heroku deployment.
+
+To get started we need our HEROKU_API_KEY.  [This page](https://devcenter.heroku.com/articles/authentication) details that.
+Here's how THAT went:
+```
+QuinquenniumF:tyno-lrs tim$ heroku login
+Enter your Heroku credentials.
+Email: timofeyc@hotmail.com
+Password (typing will be hidden): 
+ ▸    HTTP Error: https://api.heroku.com/login 400 Bad Request
+ ▸    Invalid response from API.
+ ▸    HTTP 400
+ ▸    {timofeyc@hotmail.com he2@wWsSr}
+ ▸    
+ ▸    Are you behind a proxy?
+ ▸    https://devcenter.heroku.com/articles/using-the-cli#using-an-http-proxy
+QuinquenniumF:tyno-lrs tim$ heroku login
+heroku-cli: Updating to 6.13.7-5971fd5... 12.9 MB/12.9 MB
+ ▸    heroku-cli: This CLI is deprecated. Please reinstall from https://cli.heroku.com
+ ▸    login: is not a heroku command.
+ ▸    Perhaps you meant login
+ ▸    Run heroku help for a list of available commands.
+QuinquenniumF:tyno-lrs tim$ heroku --version
+heroku-cli/6.13.7-5971fd5 (darwin-x64) node-v8.2.1
+```
+
+The commande ```heroku auth:token``` get's the API KEY.
+It's encrypted so OK to store in the yamil file.
+
+
+
+[This Stack Overflow answer](https://stackoverflow.com/questions/43317980/how-do-i-deploy-my-typescript-node-js-app-to-heroku) lays out a good approach:
+*use a build server which has an integration with Heroku. After you do the build there, configure it to send the build results to Heroku. Travis has a straighforward setup like this. This way you don't need to include build outputs in your repository, which is considered an anti-pattern.*
+*On a sidenode, try using a tsconfig.json to keep the tsc configuration. It will save you from having to write such long command lines all over the place.*
+
+
+
+
+
+## About
 This project provides a good example of how to use TypeScript with NodeJS & Friends (Express) 
 in a TDD development cycle.
 
