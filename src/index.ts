@@ -3,6 +3,7 @@ import * as debug from 'debug';
 import App from './App';
 debug('ts-express:server');
 const port = normalizePort(process.env.PORT || 3000);
+console.log('port',port);
 App.set('port', port);
 const server = http.createServer(App);
 server.listen(port);
