@@ -60,8 +60,10 @@ So we will also need to learn about deploying a TypeScript Node.js on Heroku.
 There is [another article on the basics of what Heroku and TypeScript](https://medium.com/@Roaders/deploying-a-node-and-browser-typescript-project-to-heroku-3e647ef74c82) work together:
 *When your app is deployed on Heroku it runs npm install in a subshell where NODE_ENV is production. This means that dev dependencies are not resolved and that the prepublish npm script is not run. You can test this by running: ```npm install --production```*
 
+
 ### Dev dependencies
 *we have to include devDepenedencies such as typescript and any build tools in the normal dependency list we have to hook up the postinstall npm script to build our app.*
+
 
 ### Versions
 *setting the node version and npm version that you are using, again in your package.json file:*
@@ -107,6 +109,25 @@ heroku-cli/6.13.7-5971fd5 (darwin-x64) node-v8.2.1
 
 The commande ```heroku auth:token``` get's the API KEY.
 It's encrypted so OK to store in the yamil file.
+
+After that, pushing the commit of the yamil file kicked off the build on our [Travis account](https://travis-ci.org/timofeysie).
+It might still be running to this day.  It's been close to ten minutes already.
+Something must be happening.  There is an animated gif with two circles rotating each other.
+
+By default it should be running out ```npm test``` command.
+It takes about 12 seconds on this laptop.  After a full episode of Ali G Remixed Travis still says started and the balls are still rotating.  That's next level slow!
+I guess someone here was lulled into a false sense of activity by the circling circles.  After refreshing the page, it says *Passed 39 minutes ago*.
+
+[Travis docs for Node.js](https://docs.travis-ci.com/user/languages/javascript-with-nodejs/)
+
+[Examnple Yaml file for Node with Heroku](https://github.com/juristr/southtyrol-weather-mobile/blob/master/.travis.yml).
+
+[Travis docs for deploying to Heroku](https://docs.travis-ci.com/user/deployment/heroku/).
+
+[Our Travis site](https://travis-ci.org/timofeysie).
+
+
+
 
 
 
