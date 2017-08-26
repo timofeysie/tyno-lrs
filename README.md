@@ -1,7 +1,54 @@
-# Typescript NodeJS Learning Record Store
+# Tyno-lrs
+
+Tyno-lrs is a Typescript NodeJS Learning Record Store project.
+
+General details about Learning Record Stores (LRS) can be found on [here](https://en.wikipedia.org/wiki/Learning_Record_Store).
+
+Specifically, we use the [xAPI](https://experienceapi.com/overview/) as the messaging format for a distibuted learning system. 
 
 
-## APIs
+## Table of contents
+
+
+1. [About](#about)
+1. [APIs](#apis)
+1. [Travis vs Heroku](#travis-vs-heroku)
+1. [Deploying to Heroku](#deploy)
+1. [AllowJs is not set](#allowjs)
+1. [dev](#dev)
+1. [toBase64](#toBase64)
+2. [xAPI configuration](#xAPI-configuration)
+2. [xAPI installation](#xAPI-installation)
+2. [Project setup](#project-setup)
+
+
+## <a name="about">About
+This project provides a good example of how to use TypeScript with NodeJS & Friends (Express) 
+in a TDD development cycle.
+
+It contains a server app which demonstrates best practices for developing an API using TypeScript.
+This means classes with imports and proper typed functions and members.
+
+[Express](http://expressjs.com/) is used for the server aspect right now, 
+but in the future, who knows, it might be [Koa](http://koajs.com/).
+
+For the testing we use the [Mocha](https://mochajs.org/) test framework with [Chai](http://chaijs.com/api/) for assertions.
+We are using the BDD expect call to assert truthy or falsy conditions in the tests.
+This can be configured using the chai object.
+* The Expect / Should API covers the BDD assertion styles.
+* The Assert API covers the TDD assertion style.
+
+To use this server program, you will need gulp, node and npm installed.
+Use these commands:
+```
+$ npm i  
+$ gulp watch
+$ npm test
+$ npm start
+```
+
+
+## <a name="apis">APIs
 
 ```
 api/v1/heroes 
@@ -14,73 +61,8 @@ http://localhost:3000/api/v1/heroes
 ```
 
 
-## Deploying to Heroku
 
-A first try when deploying to Heroku showed that the build worked, but the site gave an error.  In the logs, there was this hint:
-```
-2017-08-05T02:06:13.314313+00:00 app[web.1]: npm ERR!     node dist/index.js
-```
-
-That's after using this link:
-```
-https://tyno-lrs.herokuapp.com/api/v1/heroes
-```
-
-The console in the browser shows:
-```
-tyno-lrs.herokuapp.com/:1 GET https://tyno-lrs.herokuapp.com/ 503 (Service Unavailable)
-```
-
-Deploying via the Heroku dashboard shows this in the log:
-```
-       
------> Caching build
-       Clearing previous node cache
-       Saving 2 cacheDirectories (default):
-       - node_modules
-       - bower_components (nothing to cache)
------> Build succeeded!
------> Discovering process types
-       Procfile declares types     -> (none)
-       Default types for buildpack -> web
------> Compressing...
-       Done: 18M
------> Launching...
-       Released v4
-       https://tyno-lrs.herokuapp.com/ deployed to Heroku
-```
-
-So, as I recall, we will need a proc file to tell Heroku which file to run.
-
-The basic commands so far have been npm test and npm start.
-But there is nothing in the dist directory, which is in the gitignore directory, meaning that it will not get to Heroku, which deploys from the master branch on GitHut currently.
-
-So we will also need to learn about deploying a TypeScript Node.js on Heroku.
-
-There is [another article on the basics of what Heroku and TypeScript](https://medium.com/@Roaders/deploying-a-node-and-browser-typescript-project-to-heroku-3e647ef74c82) work together:
-*When your app is deployed on Heroku it runs npm install in a subshell where NODE_ENV is production. This means that dev dependencies are not resolved and that the prepublish npm script is not run. You can test this by running: ```npm install --production```*
-
-
-### Dev dependencies
-*we have to include devDepenedencies such as typescript and any build tools in the normal dependency list we have to hook up the postinstall npm script to build our app.*
-
-
-### Versions
-*setting the node version and npm version that you are using, again in your package.json file:*
-```
-"engines": {
-    "node": "6.9.1",
-    "npm": "3.10.8"
-}
-```
-
-The port we know about, and is the same as using Node.js written in straight JavaScript.
-```
-const port = normalizePort(process.env.PORT || 3000);
-```
-One last not on the Medium article: *the app will publicly be available on port 80 but that's not the port that the app runs under.*
-
-### Travis vs Heroku
+### <a name="travis-vs-heroku">Travis vs Heroku
 Here is the [page](https://docs.travis-ci.com/user/deployment/heroku/) for the Tavis Heroku deployment.
 
 To get started we need our HEROKU_API_KEY.  [This page](https://devcenter.heroku.com/articles/authentication) details that.
@@ -127,52 +109,80 @@ I guess someone here was lulled into a false sense of activity by the circling c
 [Our Travis site](https://travis-ci.org/timofeysie).
 
 
-
-
-
+deposit at least $2,000 per month
 
 [This Stack Overflow answer](https://stackoverflow.com/questions/43317980/how-do-i-deploy-my-typescript-node-js-app-to-heroku) lays out a good approach:
 *use a build server which has an integration with Heroku. After you do the build there, configure it to send the build results to Heroku. Travis has a straighforward setup like this. This way you don't need to include build outputs in your repository, which is considered an anti-pattern.*
 *On a sidenode, try using a tsconfig.json to keep the tsc configuration. It will save you from having to write such long command lines all over the place.*
 
 
+#### Dev dependencies
+*we have to include devDepenedencies such as typescript and any build tools in the normal dependency list we have to hook up the postinstall npm script to build our app.*
 
 
-
-## About
-This project provides a good example of how to use TypeScript with NodeJS & Friends (Express) 
-in a TDD development cycle.
-
-It contains a server app which demonstrates best practices for developing an API using TypeScript.
-This means classes with imports and proper typed functions and members.
-
-Of course [Express](http://expressjs.com/) is used for the server aspect right now, 
-but in the future, who knows, it might be [Koa](http://koajs.com/).
-
-For the testing we use the [Mocha](https://mochajs.org/) test framework with [Chai](http://chaijs.com/api/) for assertions.
-We are using the BDD expect call to assert truthy or falsy conditions in the tests.
-This can be configured using the chai object.
-* The Expect / Should API covers the BDD assertion styles.
-* The Assert API covers the TDD assertion style.
-
-To use this server program, you will need gulp, node and npm installed.
-Use these commands:
+#### Versions
+*setting the node version and npm version that you are using, again in your package.json file:*
 ```
-$ npm i  
-$ gulp watch
-$ npm test
-$ npm start
+"engines": {
+    "node": "6.9.1",
+    "npm": "3.10.8"
+}
 ```
 
+The port we know about, and is the same as using Node.js written in straight JavaScript.
+```
+const port = normalizePort(process.env.PORT || 3000);
+```
+One last not on the Medium article: *the app will publicly be available on port 80 but that's not the port that the app runs under.*
 
-## Table of contents
 
-1. [AllowJs is not set](#allowjs)
-1. [dev](#dev)
-1. [toBase64](#toBase64)
-2. [xAPI configuration](#xAPI-configuration)
-2. [xAPI installation](#xAPI-installation)
-2. [Project setup](#project-setup)
+
+## <a name="deploy">Deploying to Heroku
+
+A first try when deploying to Heroku showed that the build worked, but the site gave an error.  In the logs, there was this hint:
+```
+2017-08-05T02:06:13.314313+00:00 app[web.1]: npm ERR!     node dist/index.js
+```
+
+That's after using this link:
+```
+https://tyno-lrs.herokuapp.com/api/v1/heroes
+```
+
+The console in the browser shows:
+```
+tyno-lrs.herokuapp.com/:1 GET https://tyno-lrs.herokuapp.com/ 503 (Service Unavailable)
+```
+
+Deploying via the Heroku dashboard shows this in the log:
+```
+       
+-----> Caching build
+       Clearing previous node cache
+       Saving 2 cacheDirectories (default):
+       - node_modules
+       - bower_components (nothing to cache)
+-----> Build succeeded!
+-----> Discovering process types
+       Procfile declares types     -> (none)
+       Default types for buildpack -> web
+-----> Compressing...
+       Done: 18M
+-----> Launching...
+       Released v4
+       https://tyno-lrs.herokuapp.com/ deployed to Heroku
+```
+
+So, as I recall, we will need a proc file to tell Heroku which file to run.
+
+The basic commands so far have been npm test and npm start.
+But there is nothing in the dist directory, which is in the gitignore directory, meaning that it will not get to Heroku, which deploys from the master branch on GitHut currently.
+
+So we will also need to learn about deploying a TypeScript Node.js on Heroku.
+
+There is [another article on the basics of what Heroku and TypeScript](https://medium.com/@Roaders/deploying-a-node-and-browser-typescript-project-to-heroku-3e647ef74c82) work together:
+*When your app is deployed on Heroku it runs npm install in a subshell where NODE_ENV is production. This means that dev dependencies are not resolved and that the prepublish npm script is not run. You can test this by running: ```npm install --production```*
+
 
 
 ## <a name="allowjs"> allowJs is not set

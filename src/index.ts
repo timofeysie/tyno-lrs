@@ -12,6 +12,7 @@ server.on('listening', onListening);
 
 function normalizePort(val: number|string): number|string|boolean {
   let port: number = (typeof val === 'string') ? parseInt(val, 10) : val;
+  console.log('port',port);
   if (isNaN(port)) return val;
   else if (port >= 0) return port;
   else return false;
