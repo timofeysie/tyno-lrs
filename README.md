@@ -23,6 +23,7 @@ Specifically, we use the [xAPI](https://experienceapi.com/overview/) as the mess
 
 
 ## <a name="about">About
+
 This project provides a good example of how to use TypeScript with NodeJS & Friends (Express) 
 in a TDD development cycle.
 
@@ -60,6 +61,10 @@ The current dev port set is 3000, so this should get the list on your local:
 http://localhost:3000/api/v1/heroes
 ```
 
+The current test api:
+```
+http://localhost:3000/api/v1/wiki/test
+```
 
 
 ### <a name="travis-vs-heroku">Travis vs Heroku

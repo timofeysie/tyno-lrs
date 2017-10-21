@@ -8,12 +8,31 @@ export class WikiRouter {
         this.init();
     }
 
+    public test(req: Request, res: Response, next: NextFunction) {
+        console.log('req',req);
+        if (req) {
+            res.status(200)
+            .send({
+                message: 'Success~',
+                status: res.status,
+            });
+        }
+        else {
+            res.status(404)
+            .send({
+                message: 'No hero found with the given id.',
+                status: res.status
+            });
+        }
+    }
+
     public getAll(req: Request, res: Response, next: NextFunction) {
         let wiki = new Wikidata();
         let biasUrl = wiki.getDataUrl('bias');
         console.log('bias',biasUrl);
-        http.get(biasUrl, (res) => {
-            const { statusCode } = res;
+        http.get(biasUrl, (res: any) => {
+            console.log('res',res);
+            const statusCode = res.statusCode;
             const contentType = res.headers['content-type'];
             console.log('res',res);
             let error;
@@ -69,7 +88,7 @@ export class WikiRouter {
 
     /** Take each handler, and attach to one of the Express.Router's endpoints. */
     init() {
-        this.router.get('/', this.getAll);
+        this.router.get('/test', this.test);
         this.router.get('/:id', this.getOne);
     }
     

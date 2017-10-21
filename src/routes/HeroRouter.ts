@@ -28,7 +28,8 @@ export class HeroRouter {
 
     /**  GET all Heroes. */
     public getAll(req: Request, res: Response, next: NextFunction) {
-        res.send(Heroes);
+        console.log('hi get all!');
+        res.send({Heroes});
     }
 
     /** GET one hero by id */
