@@ -1,5 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { Wikidata } from '../wikidata/wikidata';
+const wdk = require('wikidata-sdk');
+const url = wdk.searchEntities('Ingmar Bergman');
 import * as http from 'http';
 export class WikiRouter {
     router: Router
@@ -9,7 +11,14 @@ export class WikiRouter {
     }
 
     public test(req: Request, res: Response, next: NextFunction) {
-        console.log('req',req);
+        const search = 'Cognitive Bias'
+        const language = 'en' // will default to 'en'
+        const limit = 10 // defaults to 20
+        const format = 'json' // defaults to json
+        
+        const url = wdk.searchEntities(search, language, limit, format)
+
+        console.log('url',url);
         if (req) {
             res.status(200)
             .send({

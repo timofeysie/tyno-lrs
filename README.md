@@ -66,6 +66,35 @@ The current test api:
 http://localhost:3000/api/v1/wiki/test
 ```
 
+This is trying out the [WikiData SKD](https://github.com/maxlath/wikidata-sdk/issues).
+
+A sample JSON object returned for searchinfo contains four root level items:
+```
+searchinfo	{ contains the search string }
+search	[ contains an array of objects shown below ]
+search-continue	10
+success	1
+```
+
+
+With search string "Cognitive Bias"
+```
+repository	""
+id	"Q1127759"
+concepturi	"http://www.wikidata.org/entity/Q1127759"
+title	"Q1127759"
+pageid	1074805
+url	"//www.wikidata.org/wiki/Q1127759"
+label	"cognitive bias"
+description:	["systematic pattern of deviation from norm or rationality in judgment, whereby inferences about other people and situations may be drawn in an illogical fashion"]
+match: {	
+    type:	"label",
+    language:	"en",
+    text:	"cognitive bias"
+}
+```
+
+
 
 ### <a name="travis-vs-heroku">Travis vs Heroku
 Here is the [page](https://docs.travis-ci.com/user/deployment/heroku/) for the Tavis Heroku deployment.
