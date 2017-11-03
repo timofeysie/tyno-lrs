@@ -12,6 +12,7 @@ Specifically, we use the [xAPI](https://experienceapi.com/overview/) as the mess
 
 1. [About](#about)
 1. [APIs](#apis)
+1. [WikiData SDK](#wikidata-sdk)
 1. [Travis vs Heroku](#travis-vs-heroku)
 1. [Deploying to Heroku](#deploy)
 1. [AllowJs is not set](#allowjs)
@@ -61,11 +62,13 @@ The current dev port set is 3000, so this should get the list on your local:
 http://localhost:3000/api/v1/heroes
 ```
 
-The current test api:
+The current test api to test the WikiData SDK:
 ```
 http://localhost:3000/api/v1/wiki/test
 ```
 
+
+## <a name="wikidata-sdk"> Using the WikiData SKD
 This is trying out the [WikiData SKD](https://github.com/maxlath/wikidata-sdk/issues).
 
 A sample JSON object returned for searchinfo contains four root level items:
@@ -94,6 +97,75 @@ match: {
 }
 ```
 
+But when we search for "List of cognitive biases", we get a single response object:
+repository:	""
+id:	"Q2607828"
+concepturi:	"http://www.wikidata.org/entity/Q2607828"
+title:	"Q2607828"
+pageid:	2515555
+url:	"//www.wikidata.org/wiki/Q2607828"
+label:	"List of cognitive biases"
+description:	"Wikimedia list article"
+match: {	    
+    type:	"label"
+    language:	"en"
+    text:	"List of cognitive biases" }
+success:	1
+
+Not really what was expected.  Where is the list?
+Time to read the docs.
+
+They say *Wikidata Query allows to extract all sorts of data from Wikidata by walking the graph of entities using SPARQL*
+What is SPARQL?  Guess how that's pronounced.  Correct!
+[SPARQL](https://en.wikipedia.org/wiki/SPARQL) is a RDF query language, that is, a semantic query language for databases, able to retrieve and manipulate data stored in Resource Description Framework (RDF) format.
+
+Here is a sample of the List of W3C standards
+```
+SELECT DISTINCT ?standard ?standardLabel ?website
+WHERE
+{
+        ?standard wdt:P1462 wd:Q37033 .
+        OPTIONAL{ ?standard wdt:P856 ?website }
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+}
+ORDER BY ?standardLabel
+```
+
+That doesn't look much like how we create a query right now:
+```
+        const search = 'List of cognitive biases'
+        const language = 'en' // will default to 'en'
+        const limit = 10 // defaults to 20
+        const format = 'json' // defaults to json
+        const url = wdk.searchEntities(search, language, limit, format);
+```
+
+What are the other wdk calls?
+
+No idea what's going on here:
+```
+P1424	
+0	
+mainsnak	
+snaktype	"value"
+property	"P1424"
+hash	"90c74eeba1d427f16debce3d255ddc7dece82b90"
+datavalue	
+value	{…}
+type	"wikibase-entityid"
+datatype	"wikibase-item"
+type	"statement"
+id	"Q571$4e0a142f-4c09-f989-0c16-a74cd8a33692"
+rank	"normal"
+``` 
+
+Tried this function:
+```
+ wdk.getWikidataIdsFromWikipediaTitles
+```
+
+Similar results to above.  By the way, what are mainsnak and snaktype?
+Shouldn't it be snack or snake or something?
 
 
 ### <a name="travis-vs-heroku">Travis vs Heroku

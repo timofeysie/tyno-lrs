@@ -4,6 +4,7 @@ import * as logger from 'morgan';
 import * as bodyParser from 'body-parser';
 import HeroRouter from './routes/HeroRouter';
 import WikiRouter from './routes/WikiRouter';
+import LoginRouter from './routes/LoginRouter';
 // Creates and configures an ExpressJS web server.
 class App {
   public express: express.Application;
@@ -28,6 +29,7 @@ class App {
       });
     });
     this.express.use('/', router);
+    this.express.use('/api/v1/login', LoginRouter);
     this.express.use('/api/v1/heroes', HeroRouter);
     this.express.use('/api/v1/wiki', WikiRouter);
   }
