@@ -67,6 +67,102 @@ The current test api to test the WikiData SDK:
 http://localhost:3000/api/v1/wiki/test
 ```
 
+Currently trying to get a list of cognitive bias from WikiData.
+
+The above url retrieves the following:
+```
+url https://www.wikidata.org/w/api.php?action=wbsearchentities&search=List%20of%20cognitive%20biases&language=en&limit=20&format=json&uselang=en
+url: https://www.wikidata.org/w/api.php?action=wbsearchentities&search=List%20of%20cognitive%20biases&language=en&limit=20&format=json&uselang=en
+GET /api/v1/wiki/test 200 42.250 ms - 23
+```
+
+Using the online query tool, this would retrieve what we need.
+The filter shows: ```Instance of cognitive bias```
+```
+SELECT ?cognitive_bias ?cognitive_biasLabel WHERE {
+    SERVICE wikibase:label { 
+        bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". 
+    }
+    ?cognitive_bias wdt:P31 wd:Q1127759.
+}
+LIMIT 100
+```
+
+Now, how to turn that into a API call with the WikiData SDK?
+Instead of using the url API method, we should be using a (SPARQL queryt)[https://github.com/maxlath/wikidata-sdk/blob/master/docs/sparql_query.md]
+
+Turns out all we have to do is put that query above in a string and call this function:
+```
+const url = wdk.sparqlQuery(sparql);
+```
+
+This will return a url like this:
+```
+https://query.wikidata.org/sparql?format=json&query=%0A%20%20%20%20%20%20%20%20SELECT%20%3Fcognitive_bias%20%3Fcognitive_biasLabel%20WHERE%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20SERVICE%20wikibase%3Alabel%20%7B%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20bd%3AserviceParam%20wikibase%3Alanguage%20%22%5BAUTO_LANGUAGE%5D%2Cen%22.%20%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Fcognitive_bias%20wdt%3AP31%20wd%3AQ1127759.%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20LIMIT%20100%0A%20%20%20%20%20%20%20%20
+```
+
+In the browser this will return the expected result:
+```
+{
+  "head" : {
+    "vars" : [ "cognitive_bias", "cognitive_biasLabel" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "cognitive_bias" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q18570"
+      },
+      "cognitive_biasLabel" : {
+        "xml:lang" : "en",
+        "type" : "literal",
+        "value" : "Hawthorne effect"
+      }
+    }
+    ...
+```
+
+However in the node app when we call this url we are getting the error:
+```
+Invalid content-type.
+Expected application/json but received application/sparql-results+json
+```
+
+If we try this:
+```
+req.setHeader('content-type', 'application/sparql-results+json');
+```
+in the editor we get this error:
+```
+[ts] Property 'setHeader' does not exist on type 'Request'.
+```
+
+Do we have to do a full ssl implementation here?
+So lets look at [the docs](https://expressjs.com/en/api.html#setHeaders).  
+We are using "express": "^4.14.0".
+
+The example shows setting headers in the options that are used in an app.user function.
+
+TypeError: req.setHeader is not a function
+
+Actually, that first error is our own custom check for content type.
+We can ignore that now we know we are looking for something different.
+
+But, since we are now making an https call, we will need to do some more work.  With the old code we would get: 
+```
+Error: Protocol "https:" not supported. Expected "http:"
+```
+
+Simply using the https version will result in this error:
+```
+TypeError: Converting circular structure to JSON
+    at Object.stringify (native)
+    at stringify (/Users/tim/repos/myra-client-server/tyno-lrs/node_modules/express/lib/response.js:1119:12)
+```
+
+There is no data in the response, and we are guessing because we have not implemented https with a certificate yet.
+
+
 
 ## <a name="wikidata-sdk"> Using the WikiData SKD
 This is trying out the [WikiData SKD](https://github.com/maxlath/wikidata-sdk/issues).
@@ -947,3 +1043,20 @@ It reiles on toBase64() used in the Wrapper.ts file for setting the conf['auth']
 
 Also, the data file was not copied over in the build process.
 I need to be in the dist lib.
+
+
+## Notes
+
+Done: turn before the wharf.
+TUTORIAL_SLIDE13_DESCRIPTION
+Documents/grpahics/myra/app Images/myra 12 work b-nw-0.xcf
+Documents/grpahics/myra draft 3/29-myra-15-turn-before-c.xfc 12/11/2014
+Documents/grpahics/myra/app Images/myra 12 work b-nw-0.xcf
+
+Next, headed off:
+Documents/grpahics/myra/book 1 originals/myra4-19 b headed off 14/09/2014
+Transition name: myara 16 - headed off-page-14 - m4-19 b headed off-full-contrast-repaired.png
+
+Edited version, draft 3
+Documents/grpahics/myra draft 3/33-myra4-20-lion-island-c.xfc 12/11/2014
+

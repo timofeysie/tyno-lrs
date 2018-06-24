@@ -28,6 +28,8 @@ class App {
         message: 'Hello World!'
       });
     });
+    console.log('deal with it');
+    
     this.express.use('/', router);
     this.express.use('/api/v1/login', LoginRouter);
     this.express.use('/api/v1/heroes', HeroRouter);
