@@ -5,11 +5,19 @@ import * as bodyParser from 'body-parser';
 import HeroRouter from './routes/HeroRouter';
 import WikiRouter from './routes/WikiRouter';
 import LoginRouter from './routes/LoginRouter';
-// Creates and configures an ExpressJS web server.
+var https = require('https');
+var fs = require('fs');
+
 class App {
   public express: express.Application;
   constructor() {
     this.express = express();
+    var sslOptions = {
+      key: fs.readFileSync('key.pem'),
+      cert: fs.readFileSync('cert.pem'),
+      passphrase: 'four'
+  };
+  https.createServer(sslOptions, this.express).listen(8443)
     this.middleware();
     this.routes();
   }

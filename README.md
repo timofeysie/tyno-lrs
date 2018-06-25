@@ -23,7 +23,7 @@ Specifically, we use the [xAPI](https://experienceapi.com/overview/) as the mess
 2. [Project setup](#project-setup)
 
 
-## <a name="about">About
+## <a name="about">About</a>
 
 This project provides a good example of how to use TypeScript with NodeJS & Friends (Express) 
 in a TDD development cycle.
@@ -50,8 +50,15 @@ $ npm start
 ```
 
 
-## <a name="apis">APIs
+## <a name="apis">APIs</a>
 
+
+The SSL test implementation also makes it's WikiData call using the https class.
+```https://localhost:8443/api/v1/wiki/test```
+
+The values of the returned cognitive_bias, for example ```https://www.wikidata.org/wiki/Q136783``` actually does not include any helpful data.
+
+The data file in the dist directory would be shown via this call:
 ```
 api/v1/heroes 
 ```
@@ -160,11 +167,25 @@ TypeError: Converting circular structure to JSON
     at stringify (/Users/tim/repos/myra-client-server/tyno-lrs/node_modules/express/lib/response.js:1119:12)
 ```
 
-There is no data in the response, and we are guessing because we have not implemented https with a certificate yet.
+There is no data in the response, and we are guessing because we have not implemented https with a certificate yet.  To do that for a development server is an easy one liner:
+```
+openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 20000
+```
+The Node setup is well shown [in this tut](https://aghassi.github.io/ssl-using-express-4/).
+
+So that done, next we had an issue with overriting the request object.
+Because we have a request to the API endpoint, which then makes a request to WikiDate, we had two objects being called req.  Differentiating those got us our JSON list of 100 cognitive bias.
+
+Considering the goal of this project (to make an educational learning system using spaced repetition that uses WikiData as its learning source), the LRS portion of this is not actually essential.  If we just want a list of cognitive bias to memorize, that list can be managed on an app that uses device storage.  The actions taken on each learning item can also be stored.
+
+Future releases could send out and receive xAPI statements that can be tracked by a server app like this, but maintaining a server is actually a barrier to growth.  Managing a single mobile or PWA client app is much easier, so that is what we will be doing for now.
+
+There will be an Ionic 4 app and a React Native app with the goal of abstracting out the list keeping and spaced repetition LRS actions into pure web components to protect the project from framework churn.  For now this project will be dormant.  The Travis build might also get fixed...
 
 
 
-## <a name="wikidata-sdk"> Using the WikiData SKD
+## <a name="wikidata-sdk"> Using the WikiData SKD</a>
+
 This is trying out the [WikiData SKD](https://github.com/maxlath/wikidata-sdk/issues).
 
 A sample JSON object returned for searchinfo contains four root level items:
@@ -264,7 +285,8 @@ Similar results to above.  By the way, what are mainsnak and snaktype?
 Shouldn't it be snack or snake or something?
 
 
-### <a name="travis-vs-heroku">Travis vs Heroku
+### <a name="travis-vs-heroku">Travis vs Heroku</a>
+
 Here is the [page](https://docs.travis-ci.com/user/deployment/heroku/) for the Tavis Heroku deployment.
 
 To get started we need our HEROKU_API_KEY.  [This page](https://devcenter.heroku.com/articles/authentication) details that.
@@ -339,7 +361,7 @@ One last not on the Medium article: *the app will publicly be available on port 
 
 
 
-## <a name="deploy">Deploying to Heroku
+## <a name="deploy">Deploying to Heroku</a>
 
 A first try when deploying to Heroku showed that the build worked, but the site gave an error.  In the logs, there was this hint:
 ```
@@ -387,9 +409,9 @@ There is [another article on the basics of what Heroku and TypeScript](https://m
 
 
 
-## <a name="allowjs"> allowJs is not set
+## <a name="allowjs">allowJs is not set</a>
 
-IN the src/xapi/Wrapper.ts file, there are two VSCode editor problems.
+In the src/xapi/Wrapper.ts file, there are two VSCode editor problems.
 The first is this import:
 ```
 import * as CryptoJS from  '../../node_modules/crypto-js/crypto-js';

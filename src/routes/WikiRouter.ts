@@ -3,7 +3,7 @@ import { Wikidata } from '../wikidata/wikidata';
 const wdk = require('wikidata-sdk');
 const url = wdk.searchEntities('Ingmar Bergman');
 import * as http from 'http';
-import * as https from 'https';
+var https = require('https');
 export class WikiRouter {
     router: Router
     constructor() {
@@ -72,10 +72,8 @@ export class WikiRouter {
         `
         const url = wdk.sparqlQuery(sparql);
         console.log('bias',url);
-        http.get(url, (res: any) => {
-            console.log('result',res);
+        https.get(url, (res: any) => {
             const statusCode = res.statusCode;
-            const contentType = res.headers['content-type'];
             let error;
             if (statusCode !== 200) {
                 error = new Error('Request Failed.\n' +
@@ -87,25 +85,16 @@ export class WikiRouter {
                 res.resume();
                 return;
             }
-            console.log('result',res);
-            response.send(res);
-            res.setEncoding('utf8');
-            response.send(res);
-            // let rawData = '';
-            // res.on('data', (chunk) => { rawData += chunk; });
-            // res.on('end', () => {
-            //     try {
-            //         const parsedData = JSON.parse(rawData);
-            //         res.send(parsedData);
-            //         console.log('parsed',parsedData);
-            //     } catch (e) {
-            //         res.send(rawData);
-            //         console.error(e.message);
-            //     }
-            // });
+            let rawData = '';
+            res.on('data', (chunk) => { rawData += chunk; });
+            res.on('end', () => {
+                console.log('raw',rawData);
+                response.send(rawData);
+            });
         }).on('error', (e) => {
             console.error(`Got error: ${e.message}`);
         });
+        
     }
 
     public getOne(req: Request, res: Response, next: NextFunction) {
