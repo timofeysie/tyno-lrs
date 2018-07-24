@@ -74,6 +74,17 @@ On Heroku that would be:
 https://tyno-lrs.herokuapp.com/api/v1/wiki/magical_thinking
 ```
 
+The problem on Heroku is that the dist doesn't get built by Gulp and so we get this error in the logs:
+```
+Error: Cannot find module '/app/dist/index.js'
+```
+
+The [answer here](https://stackoverflow.com/questions/24504476/how-to-deploy-node-that-uses-gulp-to-heroku) puts this in the package.json scripts:
+```
+"postinstall": "gulp default"
+```
+
+
 ## APIs
 
 
