@@ -69,6 +69,10 @@ To test this call, try something like:
 http://localhost:3000/api/v1/wiki/magical_thinking
 ```
 
+On Heroku that would be:
+```
+https://tyno-lrs.herokuapp.com/api/v1/wiki/magical_thinking
+```
 
 ## APIs
 

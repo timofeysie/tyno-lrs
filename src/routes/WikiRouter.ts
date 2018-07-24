@@ -98,7 +98,7 @@ export class WikiRouter {
             let rawData = '';
             res.on('data', (chunk) => { rawData += chunk; });
             res.on('end', () => {
-                console.log('raw',rawData);
+                console.log('raw data',rawData);
                 let result = JSON.parse(rawData)['parse']['text']['*'];
                 let preamblesRemoved = curator.removeWikiDataPreambles(result);
                 response.send(preamblesRemoved);
