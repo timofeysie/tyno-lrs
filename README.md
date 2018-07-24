@@ -23,7 +23,7 @@ Specifically, we use the [xAPI](https://experienceapi.com/overview/) as the mess
 2. [Project setup](#project-setup)
 
 
-## <a name="about">About</a>
+## About
 
 This project provides a good example of how to use TypeScript with NodeJS & Friends (Express) 
 in a TDD development cycle.
@@ -50,7 +50,27 @@ $ npm start
 ```
 
 
-## <a name="apis">APIs</a>
+## Using the Curator
+
+To support the WikiData parsing clients, this project is going to be used to use the [art-curator](https://github.com/timofeysie/curator) library to parse WikiData and WikiMedia (Wikipedia) for lists and detail pages.
+
+One thing that is duplicated in this process is the "wikidata-sdk": "^5.2.9" used here and the one used in art-curator 5.15.2.
+
+The single page ulr WikiMedia calls are creating the correct url but getting this in the response:
+```
+  statusCode: 301,
+  statusMessage: 'TLS Redirect',
+```
+
+The createSingleWikiMediaPageUrl(pageName) returns an http call.  If we replace this with an https call, we get the content we are looking for.  We did not have to do this in the Ionic or React Native apps.
+
+To test this call, try something like:
+```
+http://localhost:3000/api/v1/wiki/magical_thinking
+```
+
+
+## APIs
 
 
 The SSL test implementation also makes it's WikiData call using the https class.
@@ -184,7 +204,7 @@ There will be an Ionic 4 app and a React Native app with the goal of abstracting
 
 
 
-## <a name="wikidata-sdk"> Using the WikiData SKD</a>
+## Using the WikiData SKD
 
 This is trying out the [WikiData SKD](https://github.com/maxlath/wikidata-sdk/issues).
 
@@ -285,7 +305,7 @@ Similar results to above.  By the way, what are mainsnak and snaktype?
 Shouldn't it be snack or snake or something?
 
 
-### <a name="travis-vs-heroku">Travis vs Heroku</a>
+## Travis vs Heroku
 
 Here is the [page](https://docs.travis-ci.com/user/deployment/heroku/) for the Tavis Heroku deployment.
 

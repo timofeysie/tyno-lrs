@@ -3,6 +3,8 @@ import { Wikidata } from '../wikidata/wikidata';
 const wdk = require('wikidata-sdk');
 const url = wdk.searchEntities('Ingmar Bergman');
 import * as http from 'http';
+var curator = require('art-curator');
+
 var https = require('https');
 export class WikiRouter {
     router: Router
@@ -60,19 +62,9 @@ export class WikiRouter {
     }
 
     public getAll(req: Request, response: Response, next: NextFunction) {
-        let wiki = new Wikidata();
-        const sparql = `
-        SELECT ?cognitive_bias ?cognitive_biasLabel WHERE {
-            SERVICE wikibase:label { 
-                bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". 
-            }
-            ?cognitive_bias wdt:P31 wd:Q1127759.
-        }
-        LIMIT 100
-        `
-        const url = wdk.sparqlQuery(sparql);
-        console.log('bias',url);
-        https.get(url, (res: any) => {
+        const wikiUrl = curator.createWikiDataUrl();
+        console.log('bias',wikiUrl);
+        https.get(wikiUrl, (res: any) => {
             const statusCode = res.statusCode;
             let error;
             if (statusCode !== 200) {
@@ -89,7 +81,8 @@ export class WikiRouter {
             res.on('data', (chunk) => { rawData += chunk; });
             res.on('end', () => {
                 console.log('raw',rawData);
-                response.send(rawData);
+                let result = JSON.parse(rawData)['results']['bindings'];
+                response.send(result);
             });
         }).on('error', (e) => {
             console.error(`Got error: ${e.message}`);
@@ -97,23 +90,22 @@ export class WikiRouter {
         
     }
 
-    public getOne(req: Request, res: Response, next: NextFunction) {
-        let query = parseInt(req.params.id);
-        // let hero = Heroes.find(hero => hero.id === query);
-        // if (hero) {
-        //     res.status(200)
-        //     .send({
-        //         message: 'Success',
-        //         status: res.status,
-        //         hero
-        //     });
-        // } else {
-        //     res.status(404)
-        //     .send({
-        //         message: 'No hero found with the given id.',
-        //         status: res.status
-        //     });
-        // }
+    public getOne(req: Request, response: Response, next: NextFunction) {
+        let pageName = req.params.id;
+        let singlePageUrl = curator.createSingleWikiMediaPageUrl(pageName);
+        let newUrl = singlePageUrl.replace('http','https');
+        https.get(newUrl, (res: any) => {
+            let rawData = '';
+            res.on('data', (chunk) => { rawData += chunk; });
+            res.on('end', () => {
+                console.log('raw',rawData);
+                let result = JSON.parse(rawData)['parse']['text']['*'];
+                let preamblesRemoved = curator.removeWikiDataPreambles(result);
+                response.send(preamblesRemoved);
+            });
+        }).on('error', (e) => {
+            console.error(`Got error: ${e.message}`);
+        });
     }
 
     /** Take each handler, and attach to one of the Express.Router's endpoints. */
