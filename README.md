@@ -84,6 +84,35 @@ The [answer here](https://stackoverflow.com/questions/24504476/how-to-deploy-nod
 "postinstall": "gulp default"
 ```
 
+That will show the following:
+```
+remote:        > typescript-api@1.0.0 postinstall /tmp/build_313a99345d04278a487886093bffffec
+remote:        > gulp default
+remote:        
+remote:        [12:07:12] Using gulpfile /tmp/build_313a99345d04278a487886093bffffec/gulpfile.js
+remote:        [12:07:12] Starting 'scripts'...
+remote:        [12:07:15] Finished 'scripts' after 2.7 s
+remote:        [12:07:15] Starting 'watch'...
+remote:        [12:07:15] Finished 'watch' after 13 ms
+remote:        [12:07:15] Starting 'default'...
+remote:        [12:07:15] Finished 'default' after 48 μs
+```
+
+Not ideal to have a watch script running on the server.  Have to write a new Gulp task to only compile.  Or is there one already?
+
+But there is no app directory, and there still isn't a dist directory despite the
+```
+$ heroku run bash
+Running bash on ⬢ tyno-lrs... up, run.2552 (Free)
+~ $ ls -l
+-rw-------   1 u57587 dyno  38558 Jul 24 11:57 README.md
+...
+```
+
+Another note from the SO answer: *all of your dependencies have to live under "dependencies" instead of having separate "devDependencies"*.
+
+Maybe that's the ticket.
+
 
 ## APIs
 
