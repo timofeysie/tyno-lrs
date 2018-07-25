@@ -2,7 +2,7 @@
   "name": "typescript-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "App.js",
   "scripts": {
     "start": "node dist/index.js",
     "test": "mocha --reporter spec --compilers ts:ts-node/register test/**/*.test.ts",

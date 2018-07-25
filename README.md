@@ -158,8 +158,17 @@ Looking at the logs:
 2018-07-25T03:58:49.622005+00:00 heroku[run.8479]: Process exited with status 130
 ```
 
+The log shows the call has status 200.  Found out about this command to debug build issues:
+```
+heroku local web
+```
 
+Got rid of the data.json dependency which wasn't being copied by in-lining the data, and locally, ```http://localhost:5000/api/v1/wiki/magical_thinking``` returns the desired description.  So why isn't this happening on the server?
 
+Do we need a port number?
+```
+https://tyno-lrs.herokuapp.com:5000/api/v1/wiki/magical_thinking
+```
 
 ## APIs
 
