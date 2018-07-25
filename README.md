@@ -115,6 +115,8 @@ Maybe that's the ticket.  But there is no app/dist directory in the project.  Th
 
 [This answer](https://stackoverflow.com/questions/29053830/gulp-deploy-dist-folder-of-node-app-to-heroku) is worth trying.
 
+But still no dist.  Notice the watch script does not include a build.  Maybe it will only do that if a file changes, which is not going to happen easily on a remote machine.
+
 
 
 ## APIs
