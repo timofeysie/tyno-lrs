@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/index.js",
     "test": "mocha --reporter spec --compilers ts:ts-node/register test/**/*.test.ts",
-    "postinstall": "gulp default"
+    "postinstall": "gulp"
   },
   "keywords": [],
   "author": "",

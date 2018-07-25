@@ -111,7 +111,10 @@ Running bash on ⬢ tyno-lrs... up, run.2552 (Free)
 
 Another note from the SO answer: *all of your dependencies have to live under "dependencies" instead of having separate "devDependencies"*.
 
-Maybe that's the ticket.
+Maybe that's the ticket.  But there is no app/dist directory in the project.  That must be a heroku setting?  But there should be a dist directory.
+
+[This answer](https://stackoverflow.com/questions/29053830/gulp-deploy-dist-folder-of-node-app-to-heroku) is worth trying.
+
 
 
 ## APIs
