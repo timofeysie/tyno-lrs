@@ -170,6 +170,8 @@ Do we need a port number?
 https://tyno-lrs.herokuapp.com:5000/api/v1/wiki/magical_thinking
 ```
 
+No, that times out.  Noticed that the dist index.js file is the file being served, literally.  Changed the main to App.js to see what happens.
+
 ## APIs
 
 
