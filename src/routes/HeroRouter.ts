@@ -1,5 +1,23 @@
 import {Router, Request, Response, NextFunction} from 'express';
-const Heroes = require('../data.json');
+const Heroes = [
+    {
+      "id": 1,
+      "name": "Luke Cage",
+      "aliases": ["Carl Lucas", "Power Man", "Mr. Bulletproof", "Hero for Hire"],
+      "occupation": "bartender",
+      "gender": "male",
+      "height": {
+        "ft": 6,
+        "in": 3
+      },
+      "hair": "bald",
+      "eyes": "brown",
+      "powers": [
+        "strength",
+        "durability",
+        "healing"
+      ]
+    }];
 export class HeroRouter {
     router: Router
     constructor() {
