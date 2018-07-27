@@ -283,7 +283,29 @@ Sounded promising but nothing changes.  The index.js file is still served up ins
 
 The result of that is in about 12 hours, METUAN of reputation 302 pointed out that the static.json file was informing the server to serve those static files.  Great.   Who's advice were we following there?
 
-So delete that file and try again.
+So delete that file and try again.  And can you guess what?  No change.  But maybe you can also guess why.  If you delete a file locally and use git to deploy that, git will not delete that file on the server.  So we have to run:
+```heroku run bash
+$ rm -r static.json
+exit
+heroku restart
+```
+
+But then the index.js file is still being served up.  Looking at the buildpacks again, we still have this one as number 3:
+```
+```
+$ heroku buildpacks
+=== tyno-lrs Buildpack URLs
+1. https://github.com/heroku/heroku-buildpack-nodejs
+2. heroku/nodejs
+3. https://github.com/heroku/heroku-buildpack-static.git
+```
+
+We can do this to remove that one:
+```
+heroku config:unset https://github.com/heroku/heroku-buildpack-static.git
+```
+
+
 
 
 ## APIs
