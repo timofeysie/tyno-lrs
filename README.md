@@ -279,11 +279,11 @@ class App {
   https.createServer(sslOptions, this.express).listen(SSL_PORT)
 ```  
 
-Sounded promising but nothing changes.  The index.js file is still served up instead of being run.  Time for StackOverflow.
+Sounded promising but nothing changes.  The index.js file is still served up instead of being run.  Time for StackOverflow.  Posted [this question](https://stackoverflow.com/questions/51552912/heroku-nodejs-index-js-file-is-sent-as-a-response-instead-of-being-executed) (same as the Heroku question pretty much).
 
+The result of that is in about 12 hours, METUAN of reputation 302 pointed out that the static.json file was informing the server to serve those static files.  Great.   Who's advice were we following there?
 
-
-
+So delete that file and try again.
 
 
 ## APIs
