@@ -170,7 +170,107 @@ Do we need a port number?
 https://tyno-lrs.herokuapp.com:5000/api/v1/wiki/magical_thinking
 ```
 
-No, that times out.  Noticed that the dist index.js file is the file being served, literally.  Changed the main to App.js to see what happens.
+No, that times out.  Noticed that the dist index.js file is the file being served, literally.  Changed the main to App.js to see what happens.  Nothing.  So the problem lies somewhere else.
+
+When the app is pushed, we can see this in the console output:
+```
+remote:        Procfile declares types     -> (none)
+remote:        Default types for buildpack -> web
+```
+
+Didn't we add a buildpack?  We can check which one is being used by running:
+```
+$ heroku buildpacks
+=== tyno-lrs Buildpack URLs
+1. https://github.com/heroku/heroku-buildpack-nodejs
+2. heroku/nodejs
+3. https://github.com/heroku/heroku-buildpack-static.git
+$ heroku buildpacks:set heroku/nodejs
+▸    The buildpack heroku/nodejs is already set on your app.
+```
+
+```
+2018-07-26T03:45:25.212564+00:00 heroku[router]: at=info method=GET path="/api/v1/wiki/magical_thinking" host=tyno-lrs.herokuapp.com request_id=778a9a15-34b9-4327-b346-938dab2d1348 fwd="49.180.52.93" dyno=web.1 connect=0ms service=2ms status=200 bytes=892 protocol=https
+2018-07-26T03:45:25.213598+00:00 app[web.1]: 10.5.146.241 - - [26/Jul/2018:03:45:25 +0000] "GET /api/v1/wiki/magical_thinking HTTP/1.1" 200 617 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+```
+
+
+Created this ticket for Heroku:
+
+I have a GitHub repo that works for me locally for example by using the 'heroku local web'.
+The app is in TypeScript and built with Gulp.  Locally, going to http://localhost:5000/api/v1/wiki/magical_thinking results in the correct description being returned.  However, after deploying the app, which has "start": "node dist/index.js", "postinstall": "gulp scripts" in the package.json file, and using the https://github.com/heroku/heroku-buildpack-nodejs, going to the url https://tyno-lrs.herokuapp.com/api/v1/wiki/magical_thinking will print out the index.js file instead of executing it.  I can't find any other issues that cover this behaviour so any help would be great.
+Thanks in advance.
+
+The response was kind of expected:
+
+*Hi there —*
+
+*Your support request has been received. However, it appears this is an application issue which falls outside the Heroku Support policy. We recommend searching our support site or asking the community on Stack Overflow for more answers. We'd also recommend making sure to investigate any application error issues by viewing your logs. You can do this in the CLI with the heroku logs command.*
+
+*If you believe this is not an application issue, respond back and your request will be reviewed by our support staff shortly. Heroku business hours are 9am - 9pm Eastern Time, Monday - Friday, excluding US Holidays. Our goal is to respond to your inquiry within 3 business days. Please note that it may take longer depending on current volume.*
+
+*Best regards, The Heroku Support Team*
+
+Yes, StackOverflow is better suited for this kind of question.  Or first, review the getting started docs to see what we missed.
+
+Let's look at the difference between [the official Heroku sample app](https://github.com/heroku/node-js-getting-started) and this app.
+
+Our port vs. Heroku:
+```
+const port = normalizePort(process.env.PORT || 3000);
+
+const PORT = process.env.PORT || 5000
+```
+
+Ours vs Heroku::
+```
+const server = http.createServer(App);
+server.listen(port);
+
+express()
+  .use(express.static(path.join(__dirname, 'public')))
+  .set('views', path.join(__dirname, 'views'))
+  .set('view engine', 'ejs')
+  .get('/', (req, res) => res.render('pages/index'))
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+```
+
+Since we have an index.ts and an App.ts, both TypeScript and compiled into "target": "es6", it might be something that is not done correctly for Heroku.  Our index file does not configure Express.  This is done in the App 
+```
+  public express: express.Application;
+  constructor() {
+    this.express = express();
+    var sslOptions = {
+      key: fs.readFileSync('key.pem'),
+      cert: fs.readFileSync('cert.pem'),
+      passphrase: 'four'
+  };
+  https.createServer(sslOptions, this.express).listen(8443)
+    this.middleware();
+    this.routes();
+  }
+  private middleware(): void {
+    this.express.use(logger('dev'));
+    this.express.use(bodyParser.json());
+    this.express.use(bodyParser.urlencoded({ extended: false }));
+  }
+```
+
+Since Heroku is served via https, maybe it's the https config we have in the middle there?
+
+I think specifically it could be the ```https.createServer(sslOptions, this.express).listen(8443)``` line.
+
+We do have a listen to port line in index, but then we configure https in the App file and possibly override the first listen function call.
+
+How about changing that line to:
+
+
+
+https://help.heroku.com/sharing/0ee97530-7a10-4d11-bff3-6c0844c31347
+
+
+
+
 
 ## APIs
 

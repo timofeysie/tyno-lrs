@@ -7,6 +7,7 @@ import WikiRouter from './routes/WikiRouter';
 import LoginRouter from './routes/LoginRouter';
 var https = require('https');
 var fs = require('fs');
+const SSL_PORT = (process.env.PORT || 3000);
 
 class App {
   public express: express.Application;
@@ -17,7 +18,7 @@ class App {
       cert: fs.readFileSync('cert.pem'),
       passphrase: 'four'
   };
-  https.createServer(sslOptions, this.express).listen(8443)
+  https.createServer(sslOptions, this.express).listen(SSL_PORT)
     this.middleware();
     this.routes();
   }
