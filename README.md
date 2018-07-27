@@ -197,8 +197,10 @@ $ heroku buildpacks:set heroku/nodejs
 
 Created this ticket for Heroku:
 
-I have a GitHub repo that works for me locally for example by using the 'heroku local web'.
-The app is in TypeScript and built with Gulp.  Locally, going to http://localhost:5000/api/v1/wiki/magical_thinking results in the correct description being returned.  However, after deploying the app, which has "start": "node dist/index.js", "postinstall": "gulp scripts" in the package.json file, and using the https://github.com/heroku/heroku-buildpack-nodejs, going to the url https://tyno-lrs.herokuapp.com/api/v1/wiki/magical_thinking will print out the index.js file instead of executing it.  I can't find any other issues that cover this behaviour so any help would be great.
+I have a [GitHub repo](https://github.com/timofeysie/tyno-lrs) that works for me locally for example by using 'npm start' or the CLI 'heroku local web', but only serves up the contents of the dist/index.js file when pushed to Heroku. 
+
+The app is in TypeScript and built with Gulp.  Locally, going to http://localhost:5000/api/v1/wiki/magical_thinking results in the correct description being returned.  However, after deploying the app, which has ```"start": "node dist/index.js", "postinstall": "gulp scripts"``` in the package.json file, and using the https://github.com/heroku/heroku-buildpack-nodejs buildpack, going to the url https://tyno-lrs.herokuapp.com/api/v1/wiki/magical_thinking will print out the index.js file instead of executing it.  I can't find any other issues that cover this behaviour so any help would be great.
+
 Thanks in advance.
 
 The response was kind of expected:
@@ -263,10 +265,22 @@ I think specifically it could be the ```https.createServer(sslOptions, this.expr
 We do have a listen to port line in index, but then we configure https in the App file and possibly override the first listen function call.
 
 How about changing that line to:
+```
+const SSL_PORT = (process.env.PORT || 3000);
+class App {
+  public express: express.Application;
+  constructor() {
+    this.express = express();
+    var sslOptions = {
+      key: fs.readFileSync('key.pem'),
+      cert: fs.readFileSync('cert.pem'),
+      passphrase: 'four'
+  };
+  https.createServer(sslOptions, this.express).listen(SSL_PORT)
+```  
 
+Sounded promising but nothing changes.  The index.js file is still served up instead of being run.  Time for StackOverflow.
 
-
-https://help.heroku.com/sharing/0ee97530-7a10-4d11-bff3-6c0844c31347
 
 
 
