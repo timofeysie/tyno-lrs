@@ -380,6 +380,57 @@ Uploading ./cert.pem SSH key... !
  ▸    Invalid public key type. Supported types are: ecdsa-sha2-nistp256, ssh-dsa, ssh-dss, ssh-ed25519, ssh-rsa
 ```
 
+So, that should be fixable.  Using [this Heroku guide](https://devcenter.heroku.com/articles/keys), added a cert.  But, we can't add the cert.pem or key.pem files, as shown above, they are not supported types.
+
+We just ran the ```heroku keys:add```.
+This added two files:
+```
+id_rsa.pub
+id_rsa.pub.pub
+```
+
+Not sure what that second one is all about.  Anyhow, I think we will have the same problem here, as those files are not on the server.  Reading more on that page, it looks like this is not actually meant for our problem.  We want to configure an https class.  The key gen we did is meant for this:
+*If you wish to use SSH instead of the default HTTPS git transport, you’ll need to create a public/private key pair to deploy code. This keypair is used for the strong cryptography and that uniquely identifies you as a developer when pushing code changes.*
+
+*Configuring SSH keys is only required if you want to use SSH Git transport when pushing to Heroku. Heroku uses HTTP Git transport by default, and if you’re happy with that, you can disregard the contents of this article.*
+
+
+Just not configuring the https class, and pushing the changes, we get this in the logs:
+```
+2018-07-29T21:39:49.601008+00:00 heroku[web.1]: Starting process with command `npm start`
+2018-07-29T21:39:52.767842+00:00 app[web.1]: > typescript-api@1.0.0 start /app
+2018-07-29T21:39:52.767848+00:00 app[web.1]: > node dist/index.js
+2018-07-29T21:39:53.397978+00:00 app[web.1]: init
+2018-07-29T21:39:53.399878+00:00 app[web.1]: init
+2018-07-29T21:39:53.401307+00:00 app[web.1]: login ready
+2018-07-29T21:39:53.401155+00:00 app[web.1]: login ready
+2018-07-29T21:39:53.465936+00:00 app[web.1]: deal with it
+2018-07-29T21:39:53.466545+00:00 app[web.1]: port 9540
+2018-07-29T21:39:53.466648+00:00 app[web.1]: port 9540
+2018-07-29T21:39:53.467794+00:00 app[web.1]: port: 9540
+2018-07-29T21:39:53.470029+00:00 app[web.1]: Port 9540 is already in use
+2018-07-29T21:39:53.484034+00:00 app[web.1]: npm ERR! code ELIFECYCLE
+2018-07-29T21:39:53.484553+00:00 app[web.1]: npm ERR! errno 1
+2018-07-29T21:39:53.492101+00:00 app[web.1]: npm ERR! typescript-api@1.0.0 start: `node dist/index.js`
+2018-07-29T21:39:53.492346+00:00 app[web.1]: npm ERR! Exit status 1
+2018-07-29T21:39:53.492824+00:00 app[web.1]: npm ERR!
+2018-07-29T21:39:53.493179+00:00 app[web.1]: npm ERR! Failed at the typescript-api@1.0.0 start script.
+2018-07-29T21:39:53.531191+00:00 app[web.1]: 
+2018-07-29T21:39:53.493408+00:00 app[web.1]: npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+2018-07-29T21:39:53.531511+00:00 app[web.1]: npm ERR! A complete log of this run can be found in:
+2018-07-29T21:39:53.531715+00:00 app[web.1]: npm ERR!     /app/.npm/_logs/2018-07-29T21_39_53_495Z-debug.log
+2018-07-29T21:39:53.592794+00:00 heroku[web.1]: Process exited with status 1
+2018-07-29T21:39:53.617755+00:00 heroku[web.1]: State changed from starting to crashed
+2018-07-29T21:40:12.799219+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/api/v1/wiki/magical_thinking" host=tyno-lrs.herokuapp.com request_id=de61e8d8-f813-4a86-a096-4e9fb1cb25d2 fwd="49.195.98.237" dyno= connect= service= status=503 bytes= protocol=https
+2018-07-29T21:40:14.060324+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=tyno-lrs.herokuapp.com request_id=647a14b3-b70f-4d20-910c-e55677925936 fwd="49.195.98.237" dyno= connect= service= status=503 bytes= protocol=https
+2018-07-29T21:40:27.954845+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/api/v1/wiki/magical_thinking" host=tyno-lrs.herokuapp.com request_id=8f4fbf18-7698-49b5-bb0e-32906a30ec36 fwd="49.195.98.237" dyno= connect= service= status=503 bytes= protocol=https
+2018-07-29T21:40:29.069001+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=tyno-lrs.herokuapp.com request_id=959b3512-1032-4dd7-936d-27b3a0fc7769 fwd="49.195.98.237" dyno= connect= service= status=503 bytes= protocol=https
+```
+
+First off you will notice the repetition of the log comments.  Not good.  The start script is being executed twice or something.  In whichever case, the setup is not right.  And then we have the crash.  I think it might be that the second time the script is run, the port is in use, so that app crashes.  
+
+
+
 ## APIs
 
 
