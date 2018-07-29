@@ -306,9 +306,79 @@ We can do this to remove that one:
 heroku config:unset https://github.com/heroku/heroku-buildpack-static.git
 ```
 
-However, this still does not change anything.  Turns out the static.json file is back!  How did that happen?  Do ```heroku run bash``` bash again and delete it.  COnfirm
+However, this still does not change anything.  Turns out the static.json file is back!  How did that happen?  Do ```heroku run bash``` bash again and delete it.
 
+The output from the push command is not something one usually reads.  But, this caught the eye:
+```
+remote: -----> App not compatible with buildpack: https://github.com/heroku/heroku-buildpack-static.git
+remote:        More info: https://devcenter.heroku.com/articles/buildpacks#detection-failure
+remote: 
+remote:  !     Push failed
+remote: Verifying deploy...
+remote: 
+remote: !	Push rejected to tyno-lrs.
+```
 
+Well there's your problem!
+App not compatible with buildpack.
+
+[This answer]() suggests running ```heroku buildpacks:set heroku/nodejs```
+
+```
+QuinquenniumF:tyno-lrs tim$ heroku buildpacks
+=== tyno-lrs Buildpack URLs
+1. https://github.com/heroku/heroku-buildpack-nodejs
+2. heroku/nodejs
+3. https://github.com/heroku/heroku-buildpack-static.git
+QuinquenniumF:tyno-lrs tim$ heroku buildpacks:remove https://github.com/heroku/heroku-buildpack-static.git
+Buildpack removed. Next release on tyno-lrs will use:
+  1. https://github.com/heroku/heroku-buildpack-nodejs
+  2. heroku/nodejs
+Run git push heroku master to create a new release using these buildpacks.
+```
+
+Pushing a new commit, we get this output:
+```
+remote: -----> Build succeeded!
+remote: -----> Discovering process types
+remote:        Procfile declares types     -> (none)
+remote:        Default types for buildpack -> web
+```
+
+Then we get an error from the API call.
+```
+2018-07-29T05:00:04.093215+00:00 app[web.1]: > typescript-api@1.0.0 start /app
+2018-07-29T05:00:04.317547+00:00 app[web.1]: login ready
+2018-07-29T05:00:04.319784+00:00 app[web.1]: fs.js:646
+2018-07-29T05:00:04.319786+00:00 app[web.1]: return binding.open(pathModule._makeLong(path), stringToFlags(flags), mode);
+2018-07-29T05:00:04.319790+00:00 app[web.1]: Error: ENOENT: no such file or directory, open 'key.pem'
+2018-07-29T05:00:04.093217+00:00 app[web.1]: > node dist/index.js
+2018-07-29T05:00:04.316810+00:00 app[web.1]: init
+2018-07-29T05:00:04.319799+00:00 app[web.1]: at tryModuleLoad (module.js:505:12)
+2018-07-29T05:00:04.326291+00:00 app[web.1]: npm ERR! code ELIFECYCLE
+2018-07-29T05:00:04.319793+00:00 app[web.1]: at new App (/app/dist/App.js:16:21)
+2018-07-29T05:00:04.319795+00:00 app[web.1]: at Object.<anonymous> (/app/dist/App.js:46:19)
+...
+2018-07-29T05:00:04.328144+00:00 app[web.1]: npm ERR! Exit status 1
+2018-07-29T05:00:04.326616+00:00 app[web.1]: npm ERR! errno 1
+2018-07-29T05:00:04.327890+00:00 app[web.1]: npm ERR! typescript-api@1.0.0 start: `node dist/index.js`
+...
+2018-07-29T05:00:04.328450+00:00 app[web.1]: npm ERR! Failed at the typescript-api@1.0.0 start script
+....
+2018-07-29T05:00:04.494765+00:00 heroku[web.1]: Process exited with status 1
+2018-07-29T05:00:04.512754+00:00 heroku[web.1]: State changed from starting to crashed
+2018-07-29T05:00:05.213211+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/api/v1/wiki/magical_thinking" host=tyno-lrs.herokuapp.com request_id=d5d63386-301b-434c-a810-c3c2d704412d fwd="49.195.98.237" dyno= connect= service= status=503 bytes= protocol=https
+2018-07-29T05:00:10.464081+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=tyno-lrs.herokuapp.com request_id=bc22df89-8b07-4e8b-9b7e-19d0e609e4dc fwd="49.195.98.237" dyno= connect= service= status=503 bytes= protocol=https
+```
+
+This is actually promising, because now there is no such file 'key.pem' which is our ssl cert.
+We need to get those on the server without adding them to the git repo.
+
+```
+$ heroku keys:add ./cert.pem
+Uploading ./cert.pem SSH key... !
+ ▸    Invalid public key type. Supported types are: ecdsa-sha2-nistp256, ssh-dsa, ssh-dss, ssh-ed25519, ssh-rsa
+```
 
 ## APIs
 

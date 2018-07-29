@@ -2,3 +2,5 @@
 /dist
 cert.pem
 key.pem
+id_rsa.pub
+id_rsa.pub.pub
