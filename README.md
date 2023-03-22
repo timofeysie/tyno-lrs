@@ -133,14 +133,14 @@ const port = normalizePort(process.env.PORT || 3000);
 
 Looking at the logs:
 ```
-2018-07-25T03:29:21.000000+00:00 app[api]: Build started by user timofeyc@hotmail.com
+2018-07-25T03:29:21.000000+00:00 app[api]: Build started by user xxx@hotmail.com
 2018-07-25T03:37:14.562202+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/api/v1/wiki/magical_thinking" host=tyno-lrs.herokuapp.com request_id=5fc84bcf-9a80-4718-9dfe-fb2d3306564a fwd="49.180.52.93" dyno= connect= service= status=503 bytes= protocol=https
 2018-07-25T03:37:15.494971+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=tyno-lrs.herokuapp.com request_id=8d9de3cc-b1eb-40e9-86f9-1ffc5134cad4 fwd="49.180.52.93" dyno= connect= service= status=503 bytes= protocol=https
 2018-07-25T03:45:23.000000+00:00 app[api]: Build failed -- check your build logs
-2018-07-25T03:55:25.000000+00:00 app[api]: Build started by user timofeyc@hotmail.com
+2018-07-25T03:55:25.000000+00:00 app[api]: Build started by user xxx@hotmail.com
 2018-07-25T03:56:09.738993+00:00 heroku[web.1]: State changed from crashed to starting
-2018-07-25T03:56:09.148680+00:00 app[api]: Deploy 38b94b9c by user timofeyc@hotmail.com
-2018-07-25T03:56:09.148680+00:00 app[api]: Release v11 created by user timofeyc@hotmail.com
+2018-07-25T03:56:09.148680+00:00 app[api]: Deploy 38b94b9c by user xxx@hotmail.com
+2018-07-25T03:56:09.148680+00:00 app[api]: Release v11 created by user xxx@hotmail.com
 2018-07-25T03:56:10.000000+00:00 app[api]: Build succeeded
 2018-07-25T03:56:13.611590+00:00 heroku[web.1]: Starting process with command `bin/boot`
 2018-07-25T03:56:16.035211+00:00 app[web.1]: Starting log redirection...
@@ -150,7 +150,7 @@ Looking at the logs:
 2018-07-25T03:56:28.360464+00:00 app[web.1]: 10.61.167.239 - - [25/Jul/2018:03:56:28 +0000] "GET /api/v1/wiki/magical_thinking HTTP/1.1" 200 617 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
 2018-07-25T03:56:28.984719+00:00 heroku[router]: at=info method=GET path="/favicon.ico" host=tyno-lrs.herokuapp.com request_id=0f95eaba-e5ee-48bb-8706-5c1ccb96fb13 fwd="49.180.52.93" dyno=web.1 connect=1ms service=3ms status=200 bytes=892 protocol=https
 2018-07-25T03:56:28.984181+00:00 app[web.1]: 10.61.167.239 - - [25/Jul/2018:03:56:28 +0000] "GET /favicon.ico HTTP/1.1" 200 617 "https://tyno-lrs.herokuapp.com/api/v1/wiki/magical_thinking" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
-2018-07-25T03:58:23.755719+00:00 app[api]: Starting process with command `bash` by user timofeyc@hotmail.com
+2018-07-25T03:58:23.755719+00:00 app[api]: Starting process with command `bash` by user xxx@hotmail.com
 2018-07-25T03:58:26.434411+00:00 heroku[run.8479]: Awaiting client
 2018-07-25T03:58:26.456437+00:00 heroku[run.8479]: Starting process with command `bash`
 2018-07-25T03:58:26.780984+00:00 heroku[run.8479]: State changed from starting to up
@@ -675,12 +675,12 @@ Here's how THAT went:
 ```
 QuinquenniumF:tyno-lrs tim$ heroku login
 Enter your Heroku credentials.
-Email: timofeyc@hotmail.com
+Email: xxx@hotmail.com
 Password (typing will be hidden): 
  ▸    HTTP Error: https://api.heroku.com/login 400 Bad Request
  ▸    Invalid response from API.
  ▸    HTTP 400
- ▸    {timofeyc@hotmail.com he2@wWsSr}
+ ▸    {xxx@hotmail.com he2@wWsSr}
  ▸    
  ▸    Are you behind a proxy?
  ▸    https://devcenter.heroku.com/articles/using-the-cli#using-an-http-proxy
